@@ -154,8 +154,7 @@
             var _this = this;
             this.grabbing_bird = null;
             this.context = context;
-            this.boardWidth = boardWidth;
-            this.boardHeight = boardHeight;
+            this.board = new Board(boardWidth, boardHeight);
             this.background = new Image();
             this.background.src = Space.BACKGROUND;
             this.background.addEventListener("load", function () {
@@ -205,16 +204,16 @@
         Space.prototype.reset = function () {
             this.removeAllViews();
             for (var i = 0; i < Space.NUM_BEANS; i++) {
-                var nv = new Bird(this.boardWidth, this.boardHeight);
+                var nv = new Bird(this.board);
                 this.addView(nv);
                 nv.z = i / Space.NUM_BEANS;
                 nv.z *= nv.z;
-                nv.reset(Space.randfrange(0, this.boardWidth), Space.randfrange(0, this.boardHeight));
+                nv.reset(Space.randfrange(0, this.board.width), Space.randfrange(0, this.board.height));
             }
         };
         Space.prototype.onSizeChanged = function (w, h) {
-            this.boardWidth = w;
-            this.boardHeight = h;
+            this.board.width = w;
+            this.board.height = h;
         };
         Space.prototype.stopAnimation = function () {
             if (this.mAnim) {
@@ -228,22 +227,22 @@
             this.reset();
             this.mAnim = window.setInterval(function () {
                 _this.context.setTransform(1, 0, 0, 1, 0, 0);
-                var widthScale = _this.boardWidth / _this.background.width;
-                var heightScale = _this.boardHeight / _this.background.height;
+                var widthScale = _this.board.width / _this.background.width;
+                var heightScale = _this.board.height / _this.background.height;
                 var sx, sy, sw, sh;
                 if (widthScale < heightScale) {
-                    sw = _this.boardWidth / heightScale;
+                    sw = _this.board.width / heightScale;
                     sh = _this.background.height;
                     sx = (_this.background.width - sw) / 2;
                     sy = 0;
                 }
                 else {
                     sw = _this.background.width;
-                    sh = _this.boardHeight / widthScale;
+                    sh = _this.board.height / widthScale;
                     sx = 0;
                     sy = (_this.background.height - sh) / 2;
                 }
-                _this.context.drawImage(_this.background, sx, sy, sw, sh, 0, 0, _this.boardWidth, _this.boardHeight);
+                _this.context.drawImage(_this.background, sx, sy, sw, sh, 0, 0, _this.board.width, _this.board.height);
                 for (var i = 0; i < _this.birds.length; i++) {
                     var nv = _this.birds[i];
                     nv.update(Space.TIMEOUT / 1000);
@@ -253,9 +252,9 @@
                     }
                     nv.draw(_this.context);
                     if (nv.x < -Space.MAX_RADIUS
-                        || nv.x > _this.boardWidth + Space.MAX_RADIUS
+                        || nv.x > _this.board.width + Space.MAX_RADIUS
                         || nv.y < -Space.MAX_RADIUS
-                        || nv.y > _this.boardHeight + Space.MAX_RADIUS) {
+                        || nv.y > _this.board.height + Space.MAX_RADIUS) {
                         nv.reset();
                     }
                 }
@@ -273,10 +272,16 @@
         Space.BACKGROUND = "img/background.jpg";
         return Space;
     }());
+    var Board = (function () {
+        function Board(width, height) {
+            this.width = width;
+            this.height = height;
+        }
+        return Board;
+    }());
     var Bird = (function () {
-        function Bird(boardWidth, boardHeight) {
-            this.boardHeight = boardHeight;
-            this.boardWidth = boardWidth;
+        function Bird(board) {
+            this.board = board;
         }
         Bird.prototype.toString = function () {
             return "<bean (" + Math.round(this.x * 10) / 10 + ", " + Math.round(this.y * 10) / 10 + ") (" + this.w + " x " + this.h + ")>";
@@ -295,8 +300,8 @@
                 _this.va = Space.randfrange(-30, 30);
                 _this.vx = Space.randfrange(-40, 40) * _this.z;
                 _this.vy = Space.randfrange(-40, 40) * _this.z;
-                var boardh = _this.boardHeight;
-                var boardw = _this.boardWidth;
+                var boardh = _this.board.height;
+                var boardw = _this.board.width;
                 if (!x) {
                     if (Space.flip()) {
                         _this.x = (_this.vx < 0 ? boardw + 2 * _this.r : -_this.r * 4);
@@ -369,4 +374,4 @@
         Bird.VMIN = 100.0;
         return Bird;
     }());
-});
+})();

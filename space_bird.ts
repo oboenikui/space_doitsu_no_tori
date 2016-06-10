@@ -204,19 +204,17 @@
         static BACKGROUND: string = "img/background.jpg"
 
         mAnim: number;
-        private boardWidth: number;
-        private boardHeight: number;
         private lastPrint: number;
         public birds: Array<Bird>;
         private background: HTMLImageElement;
         private context: CanvasRenderingContext2D;
         private grabbing_bird;
+        public board: Board;
 
         public constructor(context: CanvasRenderingContext2D, boardWidth: number, boardHeight: number) {
             this.grabbing_bird = null;
             this.context = context;
-            this.boardWidth = boardWidth;
-            this.boardHeight = boardHeight;
+            this.board = new Board(boardWidth, boardHeight);
             this.background = new Image();
             this.background.src = Space.BACKGROUND;
             this.background.addEventListener("load", () => {
@@ -239,17 +237,17 @@
             this.removeAllViews();
 
             for (var i = 0; i < Space.NUM_BEANS; i++) {
-                var nv: Bird = new Bird(this.boardWidth, this.boardHeight);
+                var nv: Bird = new Bird(this.board);
                 this.addView(nv);
                 nv.z = i / Space.NUM_BEANS;
                 nv.z *= nv.z;
-                nv.reset(Space.randfrange(0, this.boardWidth), Space.randfrange(0, this.boardHeight));
+                nv.reset(Space.randfrange(0, this.board.width), Space.randfrange(0, this.board.height));
             }
         }
 
         public onSizeChanged(w: number, h: number): void {
-            this.boardWidth = w;
-            this.boardHeight = h;
+            this.board.width = w;
+            this.board.height = h;
         }
 
         public stopAnimation(): void {
@@ -264,21 +262,21 @@
             this.reset();
             this.mAnim = window.setInterval(() => {
                 this.context.setTransform(1, 0, 0, 1, 0, 0);
-                var widthScale = this.boardWidth / this.background.width;
-                var heightScale = this.boardHeight / this.background.height;
+                var widthScale = this.board.width / this.background.width;
+                var heightScale = this.board.height / this.background.height;
                 var sx, sy, sw, sh;
                 if (widthScale < heightScale) {
-                    sw = this.boardWidth / heightScale;
+                    sw = this.board.width / heightScale;
                     sh = this.background.height;
                     sx = (this.background.width - sw) / 2;
                     sy = 0;
                 } else {
                     sw = this.background.width;
-                    sh = this.boardHeight / widthScale;
+                    sh = this.board.height / widthScale;
                     sx = 0;
                     sy = (this.background.height - sh) / 2;
                 }
-                this.context.drawImage(this.background, sx, sy, sw, sh, 0, 0, this.boardWidth, this.boardHeight);
+                this.context.drawImage(this.background, sx, sy, sw, sh, 0, 0, this.board.width, this.board.height);
                 for (var i = 0; i < this.birds.length; i++) {
 
                     var nv: Bird = this.birds[i];
@@ -292,15 +290,20 @@
                     nv.draw(this.context);
 
                     if (nv.x < - Space.MAX_RADIUS
-                        || nv.x > this.boardWidth + Space.MAX_RADIUS
+                        || nv.x > this.board.width + Space.MAX_RADIUS
                         || nv.y < - Space.MAX_RADIUS
-                        || nv.y > this.boardHeight + Space.MAX_RADIUS) {
+                        || nv.y > this.board.height + Space.MAX_RADIUS) {
                         nv.reset();
                     }
 
                 }
 
             }, Space.TIMEOUT);
+        }
+    }
+
+    class Board {
+        constructor(public width: number, public height: number) {
         }
     }
 
@@ -333,14 +336,9 @@
         private grabx_offset: number;
         private graby_offset: number;
 
-        private boardHeight: number;
-        private boardWidth: number;
-
         private image: HTMLImageElement;
 
-        constructor(boardWidth: number, boardHeight: number) {
-            this.boardHeight = boardHeight;
-            this.boardWidth = boardWidth;
+        constructor(private board: Board) {
         }
 
         public toString(): String {
@@ -364,8 +362,8 @@
 
                 this.vx = Space.randfrange(-40, 40) * this.z;
                 this.vy = Space.randfrange(-40, 40) * this.z;
-                var boardh = this.boardHeight;
-                var boardw = this.boardWidth;
+                var boardh = this.board.height;
+                var boardw = this.board.width;
                 if (!x) {
                     if (Space.flip()) {
                         this.x = (this.vx < 0 ? boardw + 2 * this.r : -this.r * 4);
@@ -436,4 +434,4 @@
             context.restore();
         }
     }
-})
+})()

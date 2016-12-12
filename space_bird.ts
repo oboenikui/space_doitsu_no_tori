@@ -3,7 +3,7 @@
     let draft_context: CanvasRenderingContext2D;
     let space: Space;
     let currentbirdindex = -1;
-    window.addEventListener("load", () => {
+    let load = () => {
         canvas = <HTMLCanvasElement>document.getElementById("space");
         let draft_canvas = <HTMLCanvasElement>document.createElement("canvas");
         if (!canvas || !canvas.getContext) return false;
@@ -64,7 +64,7 @@
             }, false);
         }
         space = new Space(canvas.getContext("2d"), window.innerWidth, window.innerHeight);
-    });
+    };
 
     window.addEventListener("resize", () => {
         if (!canvas || !canvas.getContext) return false;
@@ -397,4 +397,5 @@
             context.restore();
         }
     }
+    load();
 })()

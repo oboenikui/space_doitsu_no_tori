@@ -3,7 +3,7 @@
     var draft_context;
     var space;
     var currentbirdindex = -1;
-    window.addEventListener("load", function () {
+    var load = function () {
         canvas = document.getElementById("space");
         var draft_canvas = document.createElement("canvas");
         if (!canvas || !canvas.getContext)
@@ -65,7 +65,7 @@
             }, false);
         }
         space = new Space(canvas.getContext("2d"), window.innerWidth, window.innerHeight);
-    });
+    };
     window.addEventListener("resize", function () {
         if (!canvas || !canvas.getContext)
             return false;
@@ -213,18 +213,18 @@
             this.reset();
             this.move();
         };
-        Space.NUM_BEANS = 40;
-        Space.MIN_SCALE = 0.2;
-        Space.MAX_SCALE = 1;
-        Space.LUCKY = 0.001;
-        Space.MAX_RADIUS = Math.floor(576 * Space.MAX_SCALE);
-        Space.TIMEOUT = 17;
-        Space.BIRDS = [
-            "img/bird1.png"
-        ];
-        Space.BACKGROUND = "img/background.jpg";
         return Space;
     }());
+    Space.NUM_BEANS = 40;
+    Space.MIN_SCALE = 0.2;
+    Space.MAX_SCALE = 1;
+    Space.LUCKY = 0.001;
+    Space.MAX_RADIUS = Math.floor(576 * Space.MAX_SCALE);
+    Space.TIMEOUT = 17;
+    Space.BIRDS = [
+        "img/bird1.png"
+    ];
+    Space.BACKGROUND = "img/background.jpg";
     var Board = (function () {
         function Board(width, height) {
             this.width = width;
@@ -330,8 +330,9 @@
             context.drawImage(this.image, this.x - preX, this.y - preY, this.w * this.scale, this.h * this.scale);
             context.restore();
         };
-        Bird.VMAX = 1000.0;
-        Bird.VMIN = 100.0;
         return Bird;
     }());
+    Bird.VMAX = 1000.0;
+    Bird.VMIN = 100.0;
+    load();
 })();

@@ -9,7 +9,6 @@
     <meta name="twitter:description" content="Space Debris">
     <meta name="twitter:image" content="http://www.oboenikui.com/img/space_doitsu_no_tori.jpg">
     <title>Space Doitsu no Tori</title>
-    <script src="space_bird.js"></script>
     <style>
         * {
             margin: 0;
@@ -30,11 +29,18 @@
         body > #wrapper {
             height: auto;
         }
+
+        .no-display {
+            display: none;
+        }
     </style>
 </head>
 <body>
     <div id="wrapper">
         <canvas id="space">ご覧になるには最新のブラウザをご利用ください。</canvas>
     </div>
+    <img src="img/background.jpg" class="no-display"/>
+    <img src="img/bird1.png" class="no-display"/>
+    <script src="space_bird.js"></script>
 </body>
 </html>
